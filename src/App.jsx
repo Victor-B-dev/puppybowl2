@@ -21,11 +21,10 @@ const App = () => {
     
   const getSinglePuppyDetails = async(puppyId) => {
     const response = await fetch(`https://fsa-puppy-bowl.herokuapp.com/api/2406-ftb-et-web-ft/players/${puppyId}`);
-    const singlePuppy = await response.json();
+    const result = await response.json();
+    const singlePuppy = result.data.player
     setSinglePuppy(singlePuppy)
   }
-
-
 
   return (
     <>
@@ -46,17 +45,32 @@ const App = () => {
       </nav>
 
 
+      { singlePuppy.name ?
+        <section> 
+          <h1>Meet {singlePuppy.name}</h1>
+          <img src={singlePuppy.imageUrl}/>
+          <p> Breed: {singlePuppy.breed} </p>
+          <p> Position: {singlePuppy.status} </p>
+          <p> Team: {singlePuppy.teamId} </p>
+          <p> Cohort: {singlePuppy.cohortID} </p>
+          <button onClick={() => {setSinglePuppy({})}}>Back to the rest of our friends</button>
+        </section> :
+      <ul>
       <h1>Meet our Competitors</h1>
 
-      <ul>
       {allPuppies.map((puppy) => {
           return <li key={puppy.id} onClick={()=>{
             getSinglePuppyDetails(puppy.id)
           }}> {puppy.name} <img src={puppy.imageUrl} alt='image of a puppy'/>
-          <button>ADOPT NOW</button>
+              {
+                isLoggedIn ?
+                  <button>Hire Now</button> :
+                  null
+              }
             </li>;
         })}
       </ul>
+    }
     </> 
   );
 }
